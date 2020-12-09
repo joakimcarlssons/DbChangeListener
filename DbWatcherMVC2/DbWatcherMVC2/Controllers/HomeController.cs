@@ -31,8 +31,9 @@ namespace DbWatcherMVC2.Controllers
         {
             //_repo.GetAllPersons();
 
-            Task.Run(() => {
-                DbChecker(); 
+            Task.Run(() =>
+            {
+                DbChecker();
             });
 
             return View();
@@ -63,10 +64,22 @@ namespace DbWatcherMVC2.Controllers
         {
             using (var writer = new StreamWriter(Directory.GetCurrentDirectory() + "test.txt", true))
             {
-                writer.WriteLine($"{DateTime.UtcNow} - Something changed");
-
-                DbChecker();
+                switch (e.Info)
+                {
+                    case SqlNotificationInfo.Insert:
+                        {
+                            writer.WriteLine($"{DateTime.UtcNow} - Something was inserted");
+                            break;
+                        }
+                    default:
+                        {
+                            writer.WriteLine($"{DateTime.UtcNow} - Something was changed");
+                            break;
+                        }
+                }
             }
+
+            DbChecker();
         }
 
         public IActionResult Privacy()
